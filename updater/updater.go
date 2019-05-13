@@ -22,31 +22,33 @@ func NewUpdater(files []fileinfo.Info) Updater {
 
 func (u Updater) Update() error {
 	for _, file := range u.files {
-		err := u.updateOne(file)
-		logUpdate(file, err)
+		err, wasUpdated := u.updateOne(file)
+		logUpdate(file, wasUpdated, err)
 	}
 	return nil
 }
 
-func logUpdate(info fileinfo.Info, err error) {
+func logUpdate(info fileinfo.Info, wasUpdated bool, err error) {
 	if err == nil {
-		log.Printf("File %s, modt: %s\n", info.FileName, info.ModTime)
+		if wasUpdated {
+			log.Printf("File %s, modt: %s\n", info.FileName, info.ModTime)
+		}
 		return
 	}
-	log.Printf("File %s, error: %s\n", info.FileName, info.ModTime)
+		log.Printf("File %s, error: %s\n", info.FileName, info.ModTime)
 }
 
-func (u Updater) updateOne(info fileinfo.Info) error {
+func (u Updater) updateOne(info fileinfo.Info) (error, bool) {
 	content, err := actualLoader.Load(info.FileName)
 	if err != nil {
-		return err
+		return err, false
 	}
 	updatedContent, wasUpdated, err := updateLastMod(content, info.ModTime)
 	if err != nil {
-		return err
+		return err, wasUpdated
 	}
 	if wasUpdated {
-		return actualSaver.Save(info.FileName, updatedContent, info.ModTime, info.FileMode)
+		return actualSaver.Save(info.FileName, updatedContent, info.ModTime, info.FileMode), wasUpdated
 	}
-	return nil
+	return nil, wasUpdated
 }
