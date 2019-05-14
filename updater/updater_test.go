@@ -24,7 +24,8 @@ func TestUpdater_updateAddLastMod(t *testing.T) {
 		},
 	}
 	for _, set := range table {
-		content, err := updateLastMod([]byte(set.content), modTime)
+		content, changed, err := updateLastMod([]byte(set.content), modTime)
+		assert.True(t, changed)
 		assert.NoError(t, err)
 		assert.Equal(t, set.expected, string(content))
 	}

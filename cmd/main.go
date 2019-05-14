@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultPath = "content/posts"
+	defaultPath = "content"
 )
 
 func main() {

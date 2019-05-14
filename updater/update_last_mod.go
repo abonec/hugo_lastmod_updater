@@ -27,7 +27,7 @@ func updateLastMod(input []byte, lastMod time.Time) ([]byte, bool, error) {
 	}
 	idx := strings.Index(content, lastModTag)
 	if idx == - 1 {
-		return addLastMod(input, lastMod), false, nil
+		return addLastMod(input, lastMod), true, nil
 	}
 	updatedContent, updated := changeLastMod(input, lastMod)
 	return updatedContent, updated, nil
